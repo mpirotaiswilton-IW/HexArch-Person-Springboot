@@ -1,15 +1,17 @@
 version: '3'
 
 services:
-  publisher:
-    build:
-      context: ./person_publisher/
-      dockerfile: ./Dockerfile
-    container_name: publisher_microservice
-    restart: on-failure
-    depends_on:
-      solace-init:
-        condition: service_completed_successfully
+  # publisher:
+  #   build:
+  #     context: ./person_publisher/
+  #     dockerfile: ./Dockerfile
+  #   container_name: publisher_microservice
+  #   restart: on-failure
+  #   ports:
+  #     - "8080:8080"
+  #   depends_on:
+  #     solace-init:
+  #       condition: service_completed_successfully
 
   subscriber:
     build:
@@ -87,7 +89,7 @@ services:
       #MQTT Default VPN over TLS
       - 8883:8883
       #SEMP / PubSub+ Manager
-      - 8080:8080
+      - 8081:8080
       #REST Default VPN
       - 9000:9000
       #REST Default VPN over TLS
