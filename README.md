@@ -9,6 +9,7 @@
 * [Running the Microservice](#running-the-microservice)
     * [Cleaning up Exited Containers](#cleaning-up-exited-containers)
 * [Verifying our solution](#verifying-our-solution)
+    * [Using the API with Postman](#using-the-api-with-postman)
     * [Viewing our Database using pgAdmin](#viewing-our-database-using-pgadmin)
 
 ## Setup and Pre-requisites
@@ -17,6 +18,7 @@
 
 - Install the latest version of OpenJDK 17 on your device (The following page has a complete catalogue of OpenJDK downloads: [https://www.openlogic.com/openjdk-downloads](https://www.openlogic.com/openjdk-downloads))
 - Install Docker on your device (you can use the following link for a guide: [https://docs.docker.com/get-docker/](https://docs.docker.com/get-docker/))
+- Install Postman on your device
 
 >If you are using Docker Desktop for Windows, make sure to use version **4.26.1** or lower. 
 >
@@ -24,7 +26,7 @@
 
 2. Clone this repository or download the .zip file from GitHub (extract the downloaded zip file )
 
-## Running the Microservice
+## Running the Microservices
 
 1. Using a Command Line Interface of your choosing, change directory to the downloaded/cloned repository
 
@@ -57,34 +59,53 @@
     ```
 
 4. 6 docker containers should now be running:
-    * `publisher-microservice`: where a spring-boot api image, built using a Dockerfile, is containerized. This container is responsible for sending events contaning personal information to the event broker.
+    * `publisher-microservice`: where a spring-boot api image, built using a Dockerfile, is containerized. This container is responsible for sending events contaning personal information to the event broker with an exposed API.
     * `subscriber-microservice`: where a spring-boot api image, built using a Dockerfile, is containerized. This container is responsible for consuming events contaning personal information from the event broker to store them as entries into a database.
     * `db`: where a Postgres database is containerized and used by the `person-subscriber` application.
     * `pgadmin`: where a pgAdmin container is used to access the containerized Postgres database.
     * `solace`: where a Solace event broker is containerized.
     * `solace-init`: where a python script runs to set up our `solace` container with all the queues and subscribed topics needed for our microservices to communicate.
 
-5. After a few minutes, `publisher-microservice` will have ran and exited, sending events to be consumed by `subscriber-microservice` and populated our database. You can verify the `publisher-microservice` container has exited by running the following command:
-    ```
-    docker ps -f "name=publisher-microservice"
-    ```
+5. After a few minutes, the repository's set of microservice will be ready for use
 
 #### Cleaning up Exited Containers
 
-At this point, there are 2 container which are no longer running: `solace-init` and `publisher-microservice`. These containers have ran to set-up our Solace event-broker and to send a batch of 1000 new people entries as events. To remove these exited containers, run the following command in a seperate CLI window: 
+After a successful deployment, there should be a container which is no longer running: `solace-init`. This containers has run to set-up our Solace event-broker. To remove this exited container, run the following command in a seperate CLI window: 
 ```
 docker container prune -f
 ```
-You can verify that 4 containers are running by using the following command in your CLI:
+You can verify that 5 containers are running by using the following command in your CLI:
 ```
 docker ps
 ```
 
 ## Verifying our Solution
 
-When we deployed our microservices using docker-compose, `publisher-microservice` automatically sent 1000 entries of a mock data set (from the file [Mock_data.csv](https://github.com/mpirotaiswilton-IW/Solace-Person-Springboot/blob/main/person_publisher/src/main/resources/Mock_data.csv)) as events when the `solace-init` container had exited. From there, `subscriber-microservice` will be listening to those events, receiving the data and storing it into the `db` database. To verify our solution worked as intended, we will view the contents of the database.
+To verify our solution, we need to send a request to the API exposed by the `publisher-microservice`. Then, we can verify that our request has been published and received as an event by checking the database container with pgAdmin.
+
+### Using the API with Postman
+
+Using Postman:
+
+1. Select `Import` on the `My Workspace` left-hand side window, then import the [HexArch-Person.postman_collection.json](https://github.com/mpirotaiswilton-IW/HexArch-Person-Springboot/blob/main/HexArch-Person.postman_collection.json)
+
+2. Select the `Send Person` Post request. In the `Body` tab, there is a json object with 4 fields that would looks like this:
+    ```json
+    {
+        "firstName":"Brad",
+        "lastName":"Default",
+        "age": 34,
+        "sex": "Male"
+    }
+    ``` 
+
+    You can change these fields as you see fit.
+
+3. Send the request. You should receive a 200 OK response. 
 
 ### Viewing our Database using pgAdmin
+
+After sending a successful request with Postman, the `subscriber-microservice` will have saved a new Person in the postgres database container.
 
 Using a web browser of your choosing, head to <http://localhost:5050/>. You should see the pgAdmin login page. To verify both databases, make sure to sign in using the following credentials:
 
@@ -110,4 +131,4 @@ After successfully logging into pgAdmin, click on `Add New Server` on the Dashbo
     ```
     SELECT * FROM people_table
     ```
-11. This query should return exactly 1000 rows, you can verify that the list is accurate to the source data by comparing the result of the query to the csv file [Mock_data.csv](https://github.com/mpirotaiswilton-IW/Solace-Person-Springboot/blob/main/person_publisher/src/main/resources/Mock_data.csv)
+11. This query should return 1 result, with the fields the same as the request body contents.
