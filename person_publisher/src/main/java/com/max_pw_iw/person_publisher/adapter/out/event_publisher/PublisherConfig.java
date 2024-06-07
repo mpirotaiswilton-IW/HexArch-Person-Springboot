@@ -13,6 +13,9 @@ import org.springframework.jms.core.JmsTemplate;
 import com.solacesystems.jms.SolConnectionFactory;
 import com.solacesystems.jms.SolJmsUtility;
 
+// Why is this here?
+// Isn't there auto-configuration already happening?
+
 @Configuration
 @PropertySource({"classpath:application.properties"})
 public class PublisherConfig {
