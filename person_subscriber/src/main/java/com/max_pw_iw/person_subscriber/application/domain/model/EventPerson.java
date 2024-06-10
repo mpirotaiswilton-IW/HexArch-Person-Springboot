@@ -1,4 +1,4 @@
-package com.max_pw_iw.person_subscriber.entity;
+package com.max_pw_iw.person_subscriber.application.domain.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

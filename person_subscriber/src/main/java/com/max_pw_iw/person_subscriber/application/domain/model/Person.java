@@ -1,4 +1,4 @@
-package com.max_pw_iw.person_subscriber.entity;
+package com.max_pw_iw.person_subscriber.application.domain.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;

@@ -1,4 +1,4 @@
-package com.max_pw_iw.person_subscriber.listener;
+package com.max_pw_iw.person_subscriber.adapter.in.event_subscriber;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -7,8 +7,8 @@ import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Controller;
 
-import com.max_pw_iw.person_subscriber.entity.Person;
-import com.max_pw_iw.person_subscriber.services.PersonService;
+import com.max_pw_iw.person_subscriber.application.port.in.PersistPersonUseCase;
+import com.max_pw_iw.person_subscriber.application.domain.model.Person;
 
 import jakarta.jms.JMSException;
 import jakarta.jms.MapMessage;
@@ -19,11 +19,11 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @EnableJms
 public class PersonListener {
-    
-    private PersonService personService;
+
+	private final PersistPersonUseCase persistPersonUseCase;
 
     @JmsListener(destination = "PeopleQ")
-	public void handle(Message message) {
+	public void ConsumeMessage(Message message) {
 
 		System.out.println("New message received!");
 
@@ -46,7 +46,9 @@ public class PersonListener {
                 person.setLastName(mm.getString("lastName"));
                 person.setSex(mm.getString("sex"));
                 person.setAge(mm.getInt("age"));
-				personService.AddPerson(person);
+
+				persistPersonUseCase.SendPerson(person);
+
                 System.out.println("New person added to database: " + person.getFirstName());
 			} catch (JMSException e) {
 				e.printStackTrace();
