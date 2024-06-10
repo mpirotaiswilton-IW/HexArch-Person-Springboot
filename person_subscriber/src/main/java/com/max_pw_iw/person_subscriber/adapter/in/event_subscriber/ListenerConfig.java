@@ -34,7 +34,7 @@ public class ListenerConfig {
     }
 
 
-    @Bean
+    @Bean(name = "jmsListenerContainerFactory")
     public DefaultJmsListenerContainerFactory jmsListenerContainerFactory() {
         DefaultJmsListenerContainerFactory factory 
           = new DefaultJmsListenerContainerFactory();
