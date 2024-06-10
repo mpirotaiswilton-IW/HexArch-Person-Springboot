@@ -24,7 +24,7 @@ class SendPersonController {
     @PostMapping("/")
     ResponseEntity<String> sendPerson(@Valid @RequestBody Person person){
         sendPersonUseCase.SendPerson(person);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<String>("Sent person: " + person.getFirstName() + " " + person.getLastName(), HttpStatus.OK);
     }
 
 }
