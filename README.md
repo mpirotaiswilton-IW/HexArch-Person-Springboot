@@ -1,9 +1,9 @@
-# Solace-Person-SpringBoot
- A set of microservices built with Event-Driven Architecture and communicating with a Solace event broker
+# HexArch-Person-SpringBoot
+ A set of microservices built with Hexagonal Architecture, combining a REST API and Event-Driven Architecture communicating with a Solace event broker to send person objects and store them into a database.
 
 ## Summary
 
-[Solace-Person-SpringBoot](#solace-person-springboot)
+[HexArch-Person-SpringBoot](#hexarch-person-springboot)
 * [Summary](#summary)
 * [Setup and Pre-requisites](#setup-and-pre-requisites)
 * [Running the Microservice](#running-the-microservice)
